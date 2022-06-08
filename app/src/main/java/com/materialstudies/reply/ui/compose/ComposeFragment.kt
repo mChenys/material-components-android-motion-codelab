@@ -18,7 +18,8 @@ package com.materialstudies.reply.ui.compose
 
 import android.graphics.Color
 import android.os.Bundle
-import android.transition.Slide
+import android.transition.Transition
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +30,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
-import com.google.android.material.transition.MaterialFade
 import com.materialstudies.reply.R
 import com.materialstudies.reply.data.Account
 import com.materialstudies.reply.data.AccountStore
@@ -152,6 +152,7 @@ class ComposeFragment : Fragment() {
 
     /**
      * Expand the recipient [chip] into a popup with a list of contact addresses to choose from.
+     * chip-->recipientCardView的展示
      */
     private fun expandChip(chip: View) {
         // Configure the analogous collapse transform back to the recipient chip. This should
@@ -166,14 +167,28 @@ class ComposeFragment : Fragment() {
         closeRecipientCardOnBackPressed.isEnabled = true
 
         // TODO: Set up MaterialContainerTransform beginDelayedTransition.
+        val transform = com.google.android.material.transition.platform.MaterialContainerTransform().apply {
+            startView = chip
+            endView = binding.recipientCardView
+            scrimColor = Color.TRANSPARENT
+            endElevation = requireContext().resources.getDimension(
+                R.dimen.email_recipient_card_popup_elevation_compat
+            ) // 动画结束时在目标view上设置阴影
+            // 设置目标将确保容器转换仅在单个指定的目标视图上运行。不设置的话默认会应用到所有改变的view上
+            addTarget(binding.recipientCardView)
+        }
+
+        TransitionManager.beginDelayedTransition(binding.composeConstraintLayout, transform)
+
         binding.recipientCardView.visibility = View.VISIBLE
         // Using INVISIBLE instead of GONE ensures the chip's parent layout won't shift during
         // the transition due to chips being effectively removed.
-        chip.visibility = View.INVISIBLE
+        chip.visibility = View.INVISIBLE // 避免父容器在chip执行动画的时候发生移动,这里使用INVISIBLE
     }
 
     /**
      * Collapse the recipient card back into its [chip] form.
+     *
      */
     private fun collapseChip(chip: View) {
         // Remove the scrim view and on back pressed callbacks
@@ -182,6 +197,17 @@ class ComposeFragment : Fragment() {
         closeRecipientCardOnBackPressed.isEnabled = false
 
         // TODO: Set up MaterialContainerTransform beginDelayedTransition.
+        val transform = com.google.android.material.transition.platform.MaterialContainerTransform().apply {
+            startView = binding.recipientCardView
+            endView = chip
+            scrimColor = Color.TRANSPARENT
+            startElevation = requireContext().resources.getDimension(
+                R.dimen.email_recipient_card_popup_elevation_compat
+            )
+            addTarget(chip)
+        }
+        TransitionManager.beginDelayedTransition(binding.composeConstraintLayout, transform)
+
         chip.visibility = View.VISIBLE
         binding.recipientCardView.visibility = View.INVISIBLE
     }
