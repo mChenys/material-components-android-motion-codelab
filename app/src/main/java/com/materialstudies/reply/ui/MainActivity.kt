@@ -36,6 +36,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import com.materialstudies.reply.R
 import com.materialstudies.reply.data.EmailStore
@@ -267,9 +268,17 @@ class MainActivity : AppCompatActivity(),
           .show(supportFragmentManager, null)
     }
 
+    /**
+     * 2个HomeFragment之间切换
+     */
     fun navigateToHome(@StringRes titleRes: Int, mailbox: Mailbox) {
         binding.bottomAppBarTitle.text = getString(titleRes)
         // TODO: Set up MaterialFadeThrough transition as exit transition.
+        currentNavigationFragment?.apply {
+            exitTransition = MaterialFadeThrough().apply {
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            }
+        }
         val directions = HomeFragmentDirections.actionGlobalHomeFragment(mailbox)
         findNavController(R.id.nav_host_fragment).navigate(directions)
     }
