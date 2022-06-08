@@ -16,7 +16,9 @@
 
 package com.materialstudies.reply.ui.compose
 
+import android.graphics.Color
 import android.os.Bundle
+import android.transition.Slide
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +27,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialFade
 import com.materialstudies.reply.R
 import com.materialstudies.reply.data.Account
 import com.materialstudies.reply.data.AccountStore
@@ -32,6 +37,7 @@ import com.materialstudies.reply.data.Email
 import com.materialstudies.reply.data.EmailStore
 import com.materialstudies.reply.databinding.ComposeRecipientChipBinding
 import com.materialstudies.reply.databinding.FragmentComposeBinding
+import com.materialstudies.reply.util.themeColor
 import kotlin.LazyThreadSafetyMode.NONE
 
 /**
@@ -87,6 +93,35 @@ class ComposeFragment : Fragment() {
             )
 
             // TODO: Set up MaterialContainerTransform enterTransition and Slide returnTransition.
+            // Activity->Fragment的添加进入和退出转场动画, 添加容器动画
+            enterTransition = MaterialContainerTransform().apply {
+                // 开始view,位于Activity, 这种方式是同代码实现开始View和结束View的对应关系,而不是通过translationName实现
+                startView = requireActivity().findViewById(R.id.fab)
+                // 结束View, 位于当前Fragment
+                endView = emailCardView
+                // 动画时长
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+                scrimColor = Color.TRANSPARENT
+                containerColor = requireContext().themeColor(R.attr.colorSurface)
+                startContainerColor = requireContext().themeColor(R.attr.colorSecondary)
+                endContainerColor = requireContext().themeColor(R.attr.colorSurface)
+            }
+            // 这种退出的效果是缩小退出
+            returnTransition = MaterialElevationScale(false).apply {
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+                addTarget(R.id.email_card_view)
+            }
+            // 这种是渐变消失
+//            returnTransition = MaterialFade().apply {
+//                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+//                addTarget(R.id.email_card_view)
+//            }
+
+            // 下面这种会奔溃
+//            returnTransition = Slide().apply {
+//                duration = resources.getInteger(R.integer.reply_motion_duration_medium).toLong()
+//                addTarget(R.id.email_card_view)
+//            }
         }
     }
 

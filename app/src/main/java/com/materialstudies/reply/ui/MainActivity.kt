@@ -30,6 +30,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.transition.MaterialElevationScale
 import com.materialstudies.reply.R
 import com.materialstudies.reply.data.EmailStore
 import com.materialstudies.reply.databinding.ActivityMainBinding
@@ -269,6 +272,15 @@ class MainActivity : AppCompatActivity(),
 
     private fun navigateToCompose() {
         // TODO: Set up MaterialElevationScale transition as exit and reenter transitions.
+        // 给当前的Fragment设置退出和进入动画
+        currentNavigationFragment?.apply {
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            }
+            reenterTransition = MaterialElevationScale(true).apply {
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            }
+        }
         val directions = ComposeFragmentDirections.actionGlobalComposeFragment(currentEmailId)
         findNavController(R.id.nav_host_fragment).navigate(directions)
     }
