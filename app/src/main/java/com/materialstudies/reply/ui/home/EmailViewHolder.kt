@@ -52,7 +52,7 @@ class EmailViewHolder(
     fun bind(email: Email) {
         binding.email = email
         binding.root.isActivated = email.isStarred
-
+        //binding.cardView.transitionName = String.format(binding.root.context.getString(R.string.email_card_transition_name),email.id)
         // Set the subject's TextAppearance
         val textAppearance = binding.subjectTextView.context.themeStyle(
             if (email.isImportant) {
