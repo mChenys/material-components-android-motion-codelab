@@ -50,12 +50,14 @@
         android:id="@+id/searchFragment"
         android:name="com.materialstudies.reply.ui.search.SearchFragment"
         android:label="SearchFragment" />
+    <!--popUpTo表示栈弹出homeFragment时回到哪个fragment,这里回到根,popUpToInclusive表示是否包含自身栈弹出-->
     <action
         android:id="@+id/action_global_homeFragment"
         app:destination="@+id/homeFragment"
         app:launchSingleTop="true"
         app:popUpTo="@+id/navigation_graph"
         app:popUpToInclusive="true"/>
+    <!--action的id用来给XxxFragmentDirections创建NavDirections使用-->
     <action
         android:id="@+id/action_global_composeFragment"
         app:destination="@+id/composeFragment" />
