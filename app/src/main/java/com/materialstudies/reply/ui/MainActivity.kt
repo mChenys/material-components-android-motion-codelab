@@ -19,8 +19,11 @@ package com.materialstudies.reply.ui
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
+import android.transition.Transition
 import android.view.MenuItem
+import android.view.SurfaceControl
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.MenuRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +36,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 import com.materialstudies.reply.R
 import com.materialstudies.reply.data.EmailStore
 import com.materialstudies.reply.databinding.ActivityMainBinding
@@ -287,6 +291,53 @@ class MainActivity : AppCompatActivity(),
 
     private fun navigateToSearch() {
         // TODO: Set up MaterialSharedAxis transition as exit and reenter transitions.
+        // 设置z轴转场动画, z轴就是垂直屏幕的方向
+        currentNavigationFragment?.apply {
+            exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+                // MaterialSharedAxis参数传true,则当前fragment退出方式也是垂直屏幕向外, 这个保持和目标fragment一致,可以达到2个fragment同时执行向外出现的动画
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+                addListener(object:  androidx.transition.Transition.TransitionListener {
+                    override fun onTransitionStart(transition: androidx.transition.Transition) {
+                        Toast.makeText(this@MainActivity,"首页开始退场动画",Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onTransitionEnd(transition: androidx.transition.Transition) {
+                        Toast.makeText(this@MainActivity,"首页结束退场动画",Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onTransitionCancel(transition: androidx.transition.Transition) {
+                    }
+
+                    override fun onTransitionPause(transition: androidx.transition.Transition) {
+                    }
+
+                    override fun onTransitionResume(transition: androidx.transition.Transition) {
+                    }
+                })
+            }
+            reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+                // MaterialSharedAxis参数传false,则当前fragment返回方式也是垂直屏幕向内, 这个保持和目标fragment一致,可以达到2个fragment同时执行向内出现的动画
+                duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+                addListener(object:  androidx.transition.Transition.TransitionListener {
+                    override fun onTransitionStart(transition: androidx.transition.Transition) {
+                        Toast.makeText(this@MainActivity,"首页开始重新进入动画",Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onTransitionEnd(transition: androidx.transition.Transition) {
+                        Toast.makeText(this@MainActivity,"首页结束重新进入动画",Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onTransitionCancel(transition: androidx.transition.Transition) {
+                    }
+
+                    override fun onTransitionPause(transition: androidx.transition.Transition) {
+                    }
+
+                    override fun onTransitionResume(transition: androidx.transition.Transition) {
+                    }
+                })
+            }
+        }
         val directions = SearchFragmentDirections.actionGlobalSearchFragment()
         findNavController(R.id.nav_host_fragment).navigate(directions)
     }
