@@ -11,12 +11,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Reply.DayNight"
         tools:ignore="AllowBackup">
-        <activity android:name=".ui.MainActivity">
+    <!--    <activity android:name=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>-->
+        <activity android:name="com.demo.MainActivity2" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
